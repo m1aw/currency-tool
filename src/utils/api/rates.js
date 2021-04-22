@@ -16,15 +16,17 @@ const client = axios.create({
  * @param {string} base base currency
  */
 export const getCurrentRates = (base) => {
-  return client
-    .get("latest", { params: { base: base } })
-    .then((response) => response.data)
-    // This is done so there is no neeed to hardcode a list of currencies besides EUR
-    .then((data) => {
-      const baseCurrencyObject = { [data.base]: 1 };
-      return {
-        ...data,
-        rates: {...baseCurrencyObject, ...data.rates}
-      };
-    });
+  return (
+    client
+      .get("latest", { params: { base: base } })
+      .then((response) => response.data)
+      // This is done so there is no neeed to hardcode a list of currencies besides EUR
+      .then((data) => {
+        const baseCurrencyObject = { [data.base]: 1 };
+        return {
+          ...data,
+          rates: { ...baseCurrencyObject, ...data.rates },
+        };
+      })
+  );
 };
