@@ -1,68 +1,57 @@
 <template>
-  <div>
-    <div>
-      <select name="base-currency" id="base-currency" v-model="selectedBase">
-        <option
-          v-for="currency in baseCurrencies"
-          :key="currency"
-          :value="currency"
-        >
-          {{ currency }}
-        </option>
-      </select>
-      <input v-model="baseValue" type="number" name="base-currency-value" />
-    </div>
-    <div>
-      <select
-        name="target-currency"
-        id="target-currency"
-        v-model="selectedTarget"
+  <v-container class="white px-2 py-4 pa-sm-4 rounded-lg elevation-2">
+    <currency-converter
+      v-for="n in rows"
+      :key="n"
+      :baseCurrency="selectedBase"
+      :baseValue="baseValue"
+      :currencyRates="currencyRates"
+      @update:value="baseValue = $event"
+      @update:currency="selectedBase = $event"
+    />
+    <div class="d-flex justify-end">
+      <v-btn outlined fab large color="green" @click="addRow">
+        <span class="d-sr-only">Add row</span>
+        <v-icon>mdi-plus</v-icon>
+      </v-btn>
+      <v-btn
+        class="ml-3"
+        outlined
+        fab
+        large
+        color="red"
+        :disabled="!canRemoveRows"
+        @click="removeRow"
       >
-        <option
-          v-for="currency in targetCurrencies"
-          :key="currency"
-          :value="currency"
-        >
-          {{ currency }}
-        </option>
-      </select>
-      <input
-        :value="convertedValue"
-        type="number"
-        name="target-currency-value"
-      />
+        <span class="d-sr-only">Remove row</span>
+        <v-icon>mdi-minus</v-icon>
+      </v-btn>
     </div>
-  </div>
+  </v-container>
 </template>
 
 <script>
 import { getCurrentRates } from "@/utils/api/rates";
-
+import CurrencyConverter from "./CurrencyConverter.vue";
+const INITIAL_NUMBER_OF_ROLES = 2;
 export default {
+  components: { CurrencyConverter },
   name: "Converter",
   data() {
     return {
       currencyRates: {},
       selectedBase: "EUR",
       selectedTarget: "",
-      baseValue: 1,
+      baseValue: "1",
+      rows: INITIAL_NUMBER_OF_ROLES,
     };
   },
   computed: {
-    targetCurrencies() {
-      return this.baseCurrencies.filter(
-        (currency) => currency !== this.selectedBase
-      );
-    },
-    convertedValue() {
-      return this.convertValue(
-        this.baseValue,
-        this.currencyRates[this.selectedBase],
-        this.currencyRates[this.selectedTarget]
-      );
-    },
     baseCurrencies() {
       return Object.keys(this.currencyRates);
+    },
+    canRemoveRows() {
+      return this.rows > INITIAL_NUMBER_OF_ROLES;
     },
   },
   async mounted() {
@@ -70,9 +59,13 @@ export default {
     this.currencyRates = response.rates;
   },
   methods: {
-    convertValue(baseValue, baseRate, targetRate) {
-      console.log("args", ...arguments);
-      return (baseValue * targetRate) / baseRate;
+    addRow() {
+      this.rows++;
+    },
+    removeRow() {
+      if (this.canRemoveRows) {
+        this.rows--;
+      }
     },
   },
 };
