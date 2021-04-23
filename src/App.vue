@@ -7,6 +7,11 @@
           <div class="ma-n3 ma-sm-0">
             <Converter />
           </div>
+          <div class="mt-10">
+            <a href="https://github.com/m1aw/currency-tool"
+              >Project Repository</a
+            >
+          </div>
         </v-container>
       </v-main>
     </v-app>
