@@ -1,5 +1,5 @@
 <template>
-  <v-row>
+  <v-row class="currency-converter-row">
     <v-col>
       <v-autocomplete
         filled
@@ -61,3 +61,27 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+@import "~vuetify/src/styles/styles.sass";
+
+@media #{map-get($display-breakpoints, 'sm-and-down')} {
+  .currency-converter-row {
+    // since we know the scructure here we can be a bit more specific without relying on classes
+    .col:first-child {
+      padding-right: 0;
+      .v-text-field--rounded {
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+      }
+    }
+    .col:last-child {
+      padding-left: 0;
+      .v-text-field--rounded {
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+      }
+    }
+  }
+}
+</style>
